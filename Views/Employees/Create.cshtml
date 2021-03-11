@@ -1,0 +1,116 @@
+﻿@model EmpApp.Models.Employee
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Employee</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" runat="server">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NationalId" class="control-label"></label>
+                <input asp-for="NationalId" class="form-control" />
+                <span asp-validation-for="NationalId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateofBirth" class="control-label"></label>
+                <input asp-for="DateofBirth" class="form-control" TextMode="Date" onchange="DateSelectionChanged()" id="TextBox3"/>
+                <span asp-validation-for="DateofBirth" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Age" class="control-label"></label>
+                <input asp-for="Age" id="TextBox4"  class="form-control" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AccountId" class="control-label"></label>
+                <select class="custom-select" data-search="true" asp-for="AccountId" id="subject" asp-items="@(new SelectList(string.Empty,"Name"))">
+                    <option value=-1> select Account</option>
+                </select>
+                @*<input asp-for="AccountId" class="form-control" />*@
+                <span asp-validation-for="AccountId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LineofBusinessId" class="control-label"></label>
+                <select class="custom-select" data-search="true" asp-for="LineofBusinessId" id="topic" asp-items="@(new SelectList(string.Empty,"Name" ))">
+                    <option value=-1> select Account</option>
+                </select>
+
+
+                <span asp-validation-for="LineofBusinessId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        var subjectObject = {
+            "TE Data": {
+                "Basic": [""],
+                "Technical Support": [""],
+
+            },
+            "Telecom Egypt": {
+                "Inbound": [""],
+                "Outbound": [""]
+            }
+        }
+        window.onload = function () {
+            var subjectSel = document.getElementById("subject");
+            var topicSel = document.getElementById("topic");
+            for (var x in subjectObject) {
+                subjectSel.options[subjectSel.options.length] = new Option(x, x);
+            }
+            subjectSel.onchange = function () {
+                //empty Chapters- and Topics- dropdowns
+
+                topicSel.length = 1;
+                //display correct values
+                for (var y in subjectObject[this.value]) {
+                    topicSel.options[topicSel.options.length] = new Option(y, y);
+                }
+            }
+            topicSel.onchange = function () {
+                //empty Chapters dropdown
+
+                //display correct values
+                var z = subjectObject[subjectSel.value][this.value];
+                for (var i = 0; i < z.length; i++) {
+                    chapterSel.options[chapterSel.options.length] = new Option(z[i], z[i]);
+                }
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        function DateSelectionChanged() {
+            var today = new Date();
+            var dob = new Date(document.getElementById('<%=TextBox3.ClientID%>').value);
+            var months = (today.getMonth() - dob.getMonth() + (12 * (today.getFullYear() - dob.getFullYear())));
+            document.getElementById('<%=TextBox4.ClientID%>').value = Math.round(months / 12);
+        }
+    </script>
+
+}
+
+
